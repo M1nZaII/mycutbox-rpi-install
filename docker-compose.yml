@@ -1,0 +1,39 @@
+services:
+  composite-print:
+    # 버전은 /etc/mycutbox/env 의 AGENT_IMAGE_TAG 를 사용합니다 (install.sh / OTA 가 채움).
+    image: ghcr.io/m1nzaii/mycutbox-rpi-agent:${AGENT_IMAGE_TAG}
+    container_name: mycutbox-composite-print
+    restart: unless-stopped
+    user: "1000:1000"
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/run/secrets/mycutbox110.json
+      - NODE_ENV=production
+      - PRINTER_NAME=${PRINTER_NAME:-RX1}
+      # /etc/mycutbox/env — OTA와 동일하게 Bot API(chat.postMessage)로 반복 에러 알림
+      - SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN:-}
+      - SLACK_CHANNEL_ID=${SLACK_CHANNEL_ID:-}
+      - PRINT_ERROR_SLACK_WINDOW_MS=${PRINT_ERROR_SLACK_WINDOW_MS:-600000}
+      - PRINT_ERROR_SLACK_MIN_COUNT=${PRINT_ERROR_SLACK_MIN_COUNT:-5}
+    volumes:
+      # Firestore 키는 ~/.pi/data 에 둔다 (compose 파일 기준 상대경로 ./data). rp3 소유라
+      # 컨테이너(uid 1000)도 읽고 호스트 fleet 스크립트도 읽는다. 물리 접근 차단은 화면잠금(로그인)이 담당.
+      - ./data/mycutbox110.json:/run/secrets/mycutbox110.json:ro
+      - ./cache:/home/rp3/.cache/mycutbox
+      - /var/run/cups/cups.sock:/var/run/cups/cups.sock:ro
+    network_mode: host
+    command: ["node", "print.mjs"]
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "4"
+
+  # usb-print: GVFS(/run/user/1000/gvfs) 마운트 시 Docker 29 mkdir 충돌 발생.
+  # → 호스트에서 직접 실행: install.sh의 usb-print systemd 서비스 사용
+  # usb-print:
+  #   image: ghcr.io/m1nzaii/mycutbox-rpi-agent:${AGENT_IMAGE_TAG}
+  #   ...
+  #   volumes:
+  #     - /run/user/1000/gvfs:/gvfs:ro
+
+  # watchtower removed: OTA is managed by mycutbox-ota.service/timer (host systemd)
