@@ -1,0 +1,18 @@
+window { background-color: #12121a; }
+box, label { color: #e6e9ef; }
+#clock-label { color: #ffffff; font-size: 68px; font-weight: 700; }
+#date-label  { color: #9aa4b2; font-size: 22px; }
+#status-box label { font-size: 22px; font-weight: 600; }
+entry {
+  min-height: 50px; min-width: 420px; font-size: 22px;
+  color: #ffffff; background-color: #1e1e2a;
+  border: 2px solid #3182f6; border-radius: 12px; padding: 8px 16px;
+  margin-top: 6px;
+}
+entry:focus { border-color: #04c77e; }
+#unlock-button {
+  border-radius: 10px; padding: 8px 22px; font-size: 16px; font-weight: 600;
+}
+label.ok  { color: #04c77e; }
+label.bad { color: #f04452; }
+label.muted { color: #9aa4b2; font-weight: 400; }
