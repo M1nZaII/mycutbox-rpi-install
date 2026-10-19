@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Install MyCutBox
+Comment=Install the MyCutBox photobooth agent
+# Double-click to open a terminal and run the web bootstrap install wizard.
+# (You do not need this icon after the install.)
+Exec=bash -c "curl -fsSL https://install.mycutbox.com/rp -o /tmp/mycutbox-install.sh && bash /tmp/mycutbox-install.sh; echo; read -n1 -r -p 'Press any key to close this window...'"
+Icon=printer
+Terminal=true
+Categories=System;Settings;
+Keywords=mycutbox;install;setup;photobooth;
